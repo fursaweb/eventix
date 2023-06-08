@@ -1,7 +1,28 @@
 "use client";
-import { Container, Typography, Box, TextField, Button } from "@mui/material";
+import { useState, useEffect, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
+import userAuth from "@/utils/auth";
+
+import { Container, Typography, Box, TextField, Button } from "@mui/material";
+
 const Signup = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const router = useRouter();
+
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    userAuth.signUpUser(email, password, router);
+  };
+
   return (
     <Container
       maxWidth="sm"
@@ -24,6 +45,8 @@ const Signup = () => {
             label="EMAIL"
             size="small"
             variant="filled"
+            value={email}
+            onChange={handleEmailChange}
           />
         </Box>
         <Box sx={{ mb: "35px" }}>
@@ -33,12 +56,15 @@ const Signup = () => {
             label="PASSWORD"
             size="small"
             variant="filled"
+            value={password}
+            onChange={handlePasswordChange}
           />
         </Box>
         <Box sx={{ mb: "15px" }}>
           <Button
             fullWidth
             variant="contained"
+            onClick={handleSubmit}
             sx={{
               borderRadius: "10px",
               textTransform: "none",
@@ -52,6 +78,7 @@ const Signup = () => {
           <Button
             fullWidth
             variant="outlined"
+            type="submit"
             sx={{
               borderRadius: "10px",
               textTransform: "none",
