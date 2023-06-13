@@ -6,7 +6,7 @@ import {
 import { auth } from "../firebase";
 
 class UserAuth {
-  signUpUser(email: string, password: string, router: any) {
+  signUpUser(email: string, password: string, router: any): void {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed up
@@ -25,6 +25,7 @@ class UserAuth {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
+        console.log(user);
         // Redirect to dashboard
         router.push("/dashboard");
       })
@@ -37,7 +38,7 @@ class UserAuth {
     signOut(auth)
       .then(() => {
         // Logged out & redirect to dashboard
-        router.push("/signup");
+        router.push("/login");
       })
       .catch((error) => {
         const errorCode = error.code;
