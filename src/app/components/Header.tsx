@@ -1,8 +1,14 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { Box, AppBar, Toolbar, Typography, Button } from "@mui/material";
+import userAuth from "@/utils/auth";
 
 const Header = () => {
-  const logout = () => {};
+  const router = useRouter();
+
+  const logout = () => {
+    userAuth.logOutUser(router);
+  };
 
   return (
     <AppBar position="static">

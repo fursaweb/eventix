@@ -33,7 +33,14 @@ const Signup = () => {
         height: "100%",
       }}
     >
-      <Box sx={{ textAlign: "center" }}>
+      <Box
+        sx={{
+          textAlign: "center",
+          maxWidth: 500,
+          width: "100%",
+          padding: "0 22px",
+        }}
+      >
         <Image src="/create-account.svg" width="141" height="188" alt="" />
         <Typography variant="h5" align="center" sx={{ fontWeight: 700 }}>
           CREATE YOUR ACCOUNT
@@ -78,7 +85,9 @@ const Signup = () => {
           <Button
             fullWidth
             variant="outlined"
-            type="submit"
+            onClick={() => {
+              router.push("/login");
+            }}
             sx={{
               borderRadius: "10px",
               textTransform: "none",
