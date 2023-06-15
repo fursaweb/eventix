@@ -1,9 +1,21 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Container, Typography, Box, Button } from "@mui/material";
 
+import CreateEvent from "@/app/components/CreateEvent";
+
 const Dashboard = () => {
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+
+  const handleClick = (): void => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = (): void => {
+    setOpenDialog(false);
+  };
+
   return (
     <>
       <Container
@@ -32,16 +44,30 @@ const Dashboard = () => {
           <Typography
             variant="h5"
             align="center"
-            sx={{ fontWeight: 700, textTransform: "uppercase" }}
+            sx={{
+              fontWeight: 700,
+              textTransform: "uppercase",
+              color: "#C4C4C4",
+              fontSize: "1.25rem",
+              marginTop: "20px",
+            }}
           >
             No events yet
           </Typography>
         </Box>
-        <Box sx={{ mb: "15px", position: "absolute", bottom: "100px" }}>
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: "100px",
+            maxWidth: 500,
+            width: "100%",
+            padding: "0 22px",
+          }}
+        >
           <Button
             fullWidth
             variant="contained"
-            // onClick={}
+            onClick={handleClick}
             sx={{
               borderRadius: "10px",
               textTransform: "none",
@@ -51,6 +77,7 @@ const Dashboard = () => {
             Create new event
           </Button>
         </Box>
+        <CreateEvent open={openDialog} onClose={handleClose} />
       </Container>
     </>
   );
