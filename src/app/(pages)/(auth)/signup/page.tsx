@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import userAuth from "@/utils/auth";
 
-import { Container, Typography, Box, TextField, Button } from "@mui/material";
+import { Container, Typography, Box, Button } from "@mui/material";
+
+import Input from "@/app/components/Input";
 
 const Signup = () => {
   const [email, setEmail] = useState<string>("");
@@ -46,7 +48,7 @@ const Signup = () => {
           CREATE YOUR ACCOUNT
         </Typography>
         <Box sx={{ mb: "15px", mt: "50px" }}>
-          <TextField
+          <Input
             type="email"
             fullWidth
             label="EMAIL"
@@ -57,7 +59,7 @@ const Signup = () => {
           />
         </Box>
         <Box sx={{ mb: "35px" }}>
-          <TextField
+          <Input
             type="password"
             fullWidth
             label="PASSWORD"
