@@ -55,6 +55,7 @@ const Signup = () => {
             size="small"
             variant="filled"
             value={email}
+            id="email"
             onChange={handleEmailChange}
           />
         </Box>
@@ -66,6 +67,7 @@ const Signup = () => {
             size="small"
             variant="filled"
             value={password}
+            id="password"
             onChange={handlePasswordChange}
           />
         </Box>

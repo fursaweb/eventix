@@ -8,6 +8,7 @@ interface Props {
   size: "small" | "medium";
   variant: "filled" | "outlined";
   value: string;
+  id: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -18,6 +19,7 @@ const Input: FC<Props> = ({
   size,
   variant,
   value,
+  id,
   onChange,
 }): ReactElement => {
   return (
@@ -28,6 +30,7 @@ const Input: FC<Props> = ({
       size={size}
       variant={variant}
       value={value}
+      id={id}
       onChange={onChange}
     />
   );
