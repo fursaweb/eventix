@@ -1,9 +1,13 @@
-import { useEffect, useState, FC, ChangeEvent } from "react";
-import { Button, Box, Dialog, DialogTitle, DialogContent } from "@mui/material";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContentText from "@mui/material/DialogContentText";
-import Input from "./Input";
-import { parseJsonSourceFileConfigFileContent } from "typescript";
+import { useState, FC, ChangeEvent } from "react";
+import {
+  Button,
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from "@mui/material";
 
 interface Props {
   open: boolean;
@@ -18,14 +22,13 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
     time: "",
     description: "",
   });
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { id, value } = e.target;
     setEventData({ ...eventData, [id]: value });
   };
 
-  useEffect(() => {
-    console.log(eventData);
-  });
+  const handleSubmit = () => {};
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
@@ -34,7 +37,7 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
       </DialogTitle>
       <DialogContent>
         <Box sx={{ mt: "15px", mb: "15px" }}>
-          <Input
+          <TextField
             type="text"
             fullWidth
             label="Event title"
@@ -46,7 +49,7 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
           />
         </Box>
         <Box sx={{ mb: "15px" }}>
-          <Input
+          <TextField
             type="text"
             fullWidth
             label="Venue"
@@ -59,7 +62,7 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
         </Box>
         <Box sx={{ display: "flex", mb: "15px" }}>
           <Box sx={{ mr: "4px", flex: "0 0 calc(50% - 4px)" }}>
-            <Input
+            <TextField
               type="date"
               fullWidth
               label="Date"
@@ -67,24 +70,27 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
               variant="outlined"
               value={eventData.date}
               id="date"
+              InputLabelProps={{ shrink: true }}
               onChange={handleChange}
             />
           </Box>
           <Box sx={{ ml: "4px", flex: "0 0 calc(50% - 4px)" }}>
-            <Input
+            <TextField
               type="time"
               fullWidth
               label="Time"
               size="small"
               variant="outlined"
               value={eventData.time}
+              placeholder=""
               id="time"
+              InputLabelProps={{ shrink: true }}
               onChange={handleChange}
             />
           </Box>
         </Box>
         <Box sx={{ mb: "15px" }}>
-          <Input
+          <TextField
             type="text"
             fullWidth
             label="Description"
@@ -95,22 +101,23 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
             onChange={handleChange}
           />
         </Box>
-        {/* <Box sx={{ mb: "15px" }}>
-          <Input
+        <Box sx={{ mb: "15px" }}>
+          <TextField
             type="file"
             fullWidth
             label="Flyer"
             size="small"
+            id="flyer"
             variant="outlined"
-            // value="value"
+            InputLabelProps={{ shrink: true }}
             onChange={() => {}}
           />
-        </Box> */}
+        </Box>
         <DialogActions sx={{ pl: 0, pr: 0 }}>
           <Button
             fullWidth
             variant="outlined"
-            onClick={() => {}}
+            onClick={onClose}
             sx={{
               borderRadius: "10px",
               textTransform: "none",
@@ -122,7 +129,7 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
           <Button
             fullWidth
             variant="contained"
-            onClick={() => {}}
+            onClick={handleSubmit}
             sx={{
               borderRadius: "10px",
               textTransform: "none",
