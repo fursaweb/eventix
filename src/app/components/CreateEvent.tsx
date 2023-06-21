@@ -1,4 +1,4 @@
-import { useState, FC, ChangeEvent } from "react";
+import { useState, FC, ChangeEvent, useEffect } from "react";
 import {
   Button,
   Box,
@@ -9,26 +9,70 @@ import {
   TextField,
 } from "@mui/material";
 
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
+interface EventData {
+  eventTitle: string;
+  venue: string;
+  date: string;
+  time: string;
+  description: string;
+  flier: File | string | undefined;
+}
+
 const CreateEvent: FC<Props> = ({ open, onClose }) => {
-  const [eventData, setEventData] = useState({
+  const [eventData, setEventData] = useState<EventData>({
     eventTitle: "",
     venue: "",
     date: "",
     time: "",
     description: "",
+    flier: undefined,
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { id, value } = e.target;
-    setEventData({ ...eventData, [id]: value });
+    if (e.target.type !== "file") {
+      const { id, value } = e.target;
+      setEventData({ ...eventData, [id]: value });
+    } else {
+      const { files } = e.target;
+
+      if (files) {
+        setEventData({ ...eventData, flier: "file" });
+      }
+    }
   };
 
-  const handleSubmit = () => {};
+  useEffect(() => {
+    console.log(eventData);
+  });
+
+  const createEvent = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "events"), eventData);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
+  const handleSubmit = () => {
+    createEvent();
+    setEventData({
+      eventTitle: "",
+      venue: "",
+      date: "",
+      time: "",
+      description: "",
+      flier: undefined,
+    });
+    onClose();
+  };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
@@ -105,12 +149,12 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
           <TextField
             type="file"
             fullWidth
-            label="Flyer"
+            label="Flier"
             size="small"
-            id="flyer"
+            id="flier"
             variant="outlined"
             InputLabelProps={{ shrink: true }}
-            onChange={() => {}}
+            onChange={handleChange}
           />
         </Box>
         <DialogActions sx={{ pl: 0, pr: 0 }}>
