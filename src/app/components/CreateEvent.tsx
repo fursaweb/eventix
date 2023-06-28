@@ -1,4 +1,4 @@
-import { useState, FC, ChangeEvent, useEffect } from "react";
+import { useState, FC, ChangeEvent, useEffect, useContext } from "react";
 import {
   Button,
   Box,
@@ -9,25 +9,33 @@ import {
   TextField,
 } from "@mui/material";
 
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "@firebase/storage";
+import { db, storage } from "../../firebase";
+import { UserContext } from "@/utils/UserContext";
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
 interface EventData {
-  eventTitle: string;
+  user_id: string;
+  event_title: string;
   venue: string;
   date: string;
   time: string;
   description: string;
-  flier: File | string | undefined;
+  flier: string | ArrayBuffer | null | undefined;
 }
 
 const CreateEvent: FC<Props> = ({ open, onClose }) => {
+  const user = useContext(UserContext);
+  const uid = user?.uid;
+
+  const [loading, setLoading] = useState<boolean>(false);
   const [eventData, setEventData] = useState<EventData>({
-    eventTitle: "",
+    user_id: "",
+    event_title: "",
     venue: "",
     date: "",
     time: "",
@@ -43,28 +51,47 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
       const { files } = e.target;
 
       if (files) {
-        setEventData({ ...eventData, flier: "file" });
+        const reader = new FileReader();
+        reader.readAsDataURL(files[0]);
+        reader.onload = (readerEvent) => {
+          setEventData({ ...eventData, flier: readerEvent.target?.result });
+        };
       }
     }
   };
 
-  useEffect(() => {
-    console.log(eventData);
-  });
-
-  const createEvent = async () => {
+  const createEvent = async (data: EventData) => {
+    data = { ...data, user_id: uid };
     try {
-      const docRef = await addDoc(collection(db, "events"), eventData);
+      const docRef = await addDoc(collection(db, "events"), data);
+      const imageRef = ref(storage, `events/${docRef.id}/image`);
+      if (eventData.flier) {
+        await uploadString(
+          imageRef,
+          eventData.flier as string,
+          "data_url"
+        ).then(async () => {
+          //👇🏻 Gets the image URL
+          const downloadURL = await getDownloadURL(imageRef);
+          //👇🏻 Updates the docRef, by adding the flier URL to the document
+          await updateDoc(doc(db, "events", docRef.id), {
+            flier_url: downloadURL,
+          });
+        });
+      }
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   };
 
-  const handleSubmit = () => {
-    createEvent();
+  const handleSubmit = async () => {
+    setLoading(true);
+    await createEvent(eventData);
+    setLoading(false);
     setEventData({
-      eventTitle: "",
+      user_id: uid,
+      event_title: "",
       venue: "",
       date: "",
       time: "",
@@ -73,6 +100,8 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
     });
     onClose();
   };
+
+  useEffect(() => {}, []);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
@@ -87,8 +116,8 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
             label="Event title"
             size="small"
             variant="outlined"
-            value={eventData.eventTitle}
-            id="eventTitle"
+            value={eventData.event_title}
+            id="event_title"
             onChange={handleChange}
           />
         </Box>
@@ -179,8 +208,9 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
               textTransform: "none",
               fontWeight: 400,
             }}
+            disabled={loading}
           >
-            Create
+            {!loading ? "Create" : "Loading"}
           </Button>
         </DialogActions>
       </DialogContent>

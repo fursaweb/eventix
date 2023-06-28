@@ -2,6 +2,11 @@
 import "./globals.css";
 import { Roboto } from "next/font/google";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { auth } from "../firebase";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { UserContext, User } from "@/utils/UserContext";
+import { useEffect, useState } from "react";
 
 const theme = createTheme({
   palette: {
@@ -27,11 +32,26 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [userData, setUserData] = useState<User | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserData({ uid: user.uid, email: user.email as string });
+      } else {
+        router.push("/login");
+      }
+    });
+  }, [router]);
+
   return (
     <ThemeProvider theme={theme}>
-      <html lang="en">
-        <body className={roboto.className}>{children}</body>
-      </html>
+      <UserContext.Provider value={userData}>
+        <html lang="en">
+          <body className={roboto.className}>{children}</body>
+        </html>
+      </UserContext.Provider>
     </ThemeProvider>
   );
 }
