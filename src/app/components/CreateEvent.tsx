@@ -18,7 +18,7 @@ interface Props {
   onClose: () => void;
 }
 
-interface EventData {
+export interface EventData {
   user_id: string;
   event_title: string;
   venue: string;
