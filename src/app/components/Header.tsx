@@ -2,8 +2,8 @@
 import { useContext } from "react";
 import { useRouter } from "next/navigation";
 import { Box, AppBar, Toolbar, Typography, Button } from "@mui/material";
-import userAuth from "@/utils/auth";
-import { UserContext } from "@/utils/UserContext";
+import userAuth from "@/services/auth";
+import { UserContext } from "@/contexts/UserContext";
 
 const Header = () => {
   const router = useRouter();

@@ -13,7 +13,7 @@ interface Props {
 }
 
 const EventCard: FC<Props> = ({ event }) => {
-  const { event_title, description, date, time, flier, venue } = event;
+  const { event_title, date, time, venue } = event;
 
   return (
     <Card sx={{ backgroundColor: "#E9EDF1" }}>
@@ -21,7 +21,6 @@ const EventCard: FC<Props> = ({ event }) => {
         <Typography component="h5" sx={{ mb: "10px" }}>
           {event_title}
         </Typography>
-
         <Typography sx={{ mb: "5px", fontSize: 12 }} color="text.secondary">
           Date: {date}
         </Typography>
