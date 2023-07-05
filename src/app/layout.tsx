@@ -5,7 +5,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { auth } from "../firebase";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { UserContext, User } from "@/utils/UserContext";
+import { UserContext, User } from "@/contexts/UserContext";
 import { useEffect, useState } from "react";
 
 const theme = createTheme({

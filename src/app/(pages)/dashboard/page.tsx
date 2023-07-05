@@ -1,13 +1,12 @@
 "use client";
-import React, { useState, useContext, useEffect, useCallback } from "react";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import { Container, Typography, Box, Button } from "@mui/material";
 
 import CreateEvent, { EventData } from "@/app/components/CreateEvent";
 import EventsList from "@/app/components/EventsList";
-import { db } from "@/firebase";
-import { UserContext } from "@/utils/UserContext";
+import { UserContext } from "@/contexts/UserContext";
+import { getEvents } from "@/services/events";
 
 const Dashboard = () => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -23,29 +22,15 @@ const Dashboard = () => {
     setOpenDialog(false);
   };
 
-  const getEvents = useCallback(async () => {
-    try {
-      const q = query(collection(db, "events"), where("user_id", "==", uid));
-
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const eventsListByUser: EventData[] = [];
-        querySnapshot.forEach((doc) => {
-          eventsListByUser.push(doc.data() as EventData);
-        });
-        setEventsList(eventsListByUser);
-
-        return () => unsubscribe();
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }, [uid]);
+  const setList = (data: EventData[]) => {
+    setEventsList(data);
+  };
 
   useEffect(() => {
     if (uid) {
-      getEvents();
+      getEvents(uid, setList);
     }
-  }, [getEvents, uid]);
+  }, [uid]);
 
   return (
     <>

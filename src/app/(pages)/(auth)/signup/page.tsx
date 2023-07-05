@@ -2,7 +2,7 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import userAuth from "@/utils/auth";
+import userAuth from "@/services/auth";
 
 import { Container, Typography, Box, Button, TextField } from "@mui/material";
 
