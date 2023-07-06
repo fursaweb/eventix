@@ -7,6 +7,8 @@ import {
   where,
   onSnapshot,
   deleteDoc,
+  orderBy,
+  Timestamp,
 } from "firebase/firestore";
 import {
   getDownloadURL,
@@ -24,6 +26,12 @@ export interface EventData {
   time: string;
   description: string;
   flier: string | ArrayBuffer | null | undefined;
+  createdAt?: Timestamp | null;
+}
+
+export interface EventWithID {
+  event_id: string;
+  data: EventData;
 }
 
 export const createEvent = async (data: EventData) => {
@@ -33,9 +41,8 @@ export const createEvent = async (data: EventData) => {
     if (data.flier) {
       await uploadString(imageRef, data.flier as string, "data_url").then(
         async () => {
-          //👇🏻 Gets the image URL
           const downloadURL = await getDownloadURL(imageRef);
-          //👇🏻 Updates the docRef, by adding the flier URL to the document
+
           await updateDoc(doc(db, "events", docRef.id), {
             flier_url: downloadURL,
           });
@@ -50,15 +57,15 @@ export const createEvent = async (data: EventData) => {
 
 export const getEvents = async (
   uid: string,
-  setter: (data: EventData[]) => void
+  setter: (data: EventWithID[]) => void
 ) => {
   try {
     const q = query(collection(db, "events"), where("user_id", "==", uid));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const data: EventData[] = [];
+      const data: EventWithID[] = [];
       querySnapshot.forEach((doc) => {
-        data.push(doc.data() as EventData);
+        data.push({ data: doc.data() as EventData, event_id: doc.id });
       });
       setter(data);
 

@@ -9,24 +9,15 @@ import {
   TextField,
 } from "@mui/material";
 
-import { createEvent } from "@/services/events";
+import { createEvent, EventData } from "@/services/events";
 import { UserContext } from "@/contexts/UserContext";
+// import { timestamp } from "@/firebase";
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
-export interface EventData {
-  user_id: string;
-  event_title: string;
-  venue: string;
-  date: string;
-  time: string;
-  description: string;
-  flier: string | ArrayBuffer | null | undefined;
-}
-
-const defaultEventData = {
+const defaultEventData: EventData = {
   user_id: "",
   event_title: "",
   venue: "",
@@ -34,6 +25,7 @@ const defaultEventData = {
   time: "",
   description: "",
   flier: undefined,
+  createdAt: null,
 };
 
 const CreateEvent: FC<Props> = ({ open, onClose }) => {
@@ -62,7 +54,11 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const data = { ...eventData, user_id: uid };
+    const data: EventData = {
+      ...eventData,
+      user_id: uid,
+      // createdAt: timestamp,
+    };
     await createEvent(data);
     setLoading(false);
     setEventData(defaultEventData);

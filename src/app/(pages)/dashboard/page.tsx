@@ -3,14 +3,14 @@ import React, { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import { Container, Typography, Box, Button } from "@mui/material";
 
-import CreateEvent, { EventData } from "@/app/components/CreateEvent";
+import CreateEvent from "@/app/components/CreateEvent";
 import EventsList from "@/app/components/EventsList";
 import { UserContext } from "@/contexts/UserContext";
-import { getEvents } from "@/services/events";
+import { getEvents, EventWithID } from "@/services/events";
 
 const Dashboard = () => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [eventsList, setEventsList] = useState<EventData[] | []>([]);
+  const [eventsList, setEventsList] = useState<EventWithID[] | []>([]);
   const user = useContext(UserContext);
   const uid = user?.uid;
 
@@ -22,7 +22,7 @@ const Dashboard = () => {
     setOpenDialog(false);
   };
 
-  const setList = (data: EventData[]) => {
+  const setList = (data: EventWithID[]) => {
     setEventsList(data);
   };
 
@@ -104,6 +104,7 @@ const Dashboard = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              width: "100%",
             }}
           >
             <EventsList list={eventsList} />
