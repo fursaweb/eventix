@@ -1,5 +1,6 @@
 import React, { FC } from "react";
-import { EventData } from "@/app/components/CreateEvent";
+import { useRouter } from "next/navigation";
+import { EventData } from "@/services/events";
 import {
   Card,
   CardContent,
@@ -9,11 +10,14 @@ import {
 } from "@mui/material";
 
 interface Props {
+  event_id: string;
   event: EventData;
+  deleteEvent: (id: string) => void;
 }
 
-const EventCard: FC<Props> = ({ event }) => {
+const EventCard: FC<Props> = ({ event_id, event, deleteEvent }) => {
   const { event_title, date, time, venue } = event;
+  const router = useRouter();
 
   return (
     <Card sx={{ backgroundColor: "#E9EDF1" }}>
@@ -33,8 +37,18 @@ const EventCard: FC<Props> = ({ event }) => {
       </CardContent>
       <CardActions sx={{ padding: "2px 0 0 " }}>
         <Button
+          onClick={() => {
+            deleteEvent(event_id);
+          }}
           size="small"
-          fullWidth
+          variant="outlined"
+          sx={{ borderRadius: 0 }}
+        >
+          Delete
+        </Button>
+        <Button
+          onClick={() => router.push(`/events/${event_id}`)}
+          size="small"
           variant="contained"
           sx={{ borderRadius: 0 }}
         >
