@@ -1,12 +1,13 @@
 import {
   collection,
-  addDoc,
   doc,
+  addDoc,
+  getDoc,
   updateDoc,
+  deleteDoc,
   query,
   where,
   onSnapshot,
-  deleteDoc,
   orderBy,
   Timestamp,
 } from "firebase/firestore";
@@ -26,6 +27,7 @@ export interface EventData {
   time: string;
   description: string;
   flier: string | ArrayBuffer | null | undefined;
+  flier_url?: string;
   createdAt?: Timestamp | null;
 }
 
@@ -71,6 +73,16 @@ export const getEvents = async (
 
       return () => unsubscribe();
     });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getEventByID = async (id: string) => {
+  try {
+    const docRef = doc(db, "events", id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.data() as EventData;
   } catch (error) {
     console.log(error);
   }
