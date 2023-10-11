@@ -1,8 +1,10 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
 } from "firebase/auth";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { auth } from "../firebase";
 
 class UserAuth {
@@ -25,7 +27,6 @@ class UserAuth {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log(user);
         // Redirect to dashboard
         router.push("/dashboard");
       })
@@ -34,7 +35,7 @@ class UserAuth {
         const errorMessage = error.message;
       });
   }
-  logOutUser(router: any) {
+  logOutUser(router: AppRouterInstance) {
     signOut(auth)
       .then(() => {
         // Logged out & redirect to dashboard
@@ -43,6 +44,17 @@ class UserAuth {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+      });
+  }
+  sendResetEmail(email: string) {
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        console.log("Email was sent");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
       });
   }
 }

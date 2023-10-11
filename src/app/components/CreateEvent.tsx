@@ -8,10 +8,9 @@ import {
   DialogActions,
   TextField,
 } from "@mui/material";
-
 import { createEvent, EventData } from "@/services/events";
 import { UserContext } from "@/contexts/UserContext";
-// import { timestamp } from "@/firebase";
+import { serverTimestamp } from "firebase/firestore";
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -57,7 +56,7 @@ const CreateEvent: FC<Props> = ({ open, onClose }) => {
     const data: EventData = {
       ...eventData,
       user_id: uid,
-      // createdAt: timestamp,
+      createdAt: serverTimestamp(),
     };
     await createEvent(data);
     setLoading(false);

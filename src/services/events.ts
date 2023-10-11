@@ -9,7 +9,7 @@ import {
   where,
   onSnapshot,
   orderBy,
-  Timestamp,
+  FieldValue,
 } from "firebase/firestore";
 import {
   getDownloadURL,
@@ -20,7 +20,7 @@ import {
 import { db, storage } from "@/firebase";
 
 export interface EventData {
-  user_id: string;
+  user_id: string | undefined;
   event_title: string;
   venue: string;
   date: string;
@@ -28,7 +28,7 @@ export interface EventData {
   description: string;
   flier: string | ArrayBuffer | null | undefined;
   flier_url?: string;
-  createdAt?: Timestamp | null;
+  createdAt?: FieldValue;
 }
 
 export interface EventWithID {
@@ -59,22 +59,28 @@ export const createEvent = async (data: EventData) => {
 
 export const getEvents = async (
   uid: string,
-  setter: (data: EventWithID[]) => void
+  onSuccess: (data: EventWithID[]) => void,
+  onError: (data: boolean) => void
 ) => {
   try {
-    const q = query(collection(db, "events"), where("user_id", "==", uid));
+    const q = query(
+      collection(db, "events"),
+      where("user_id", "==", uid),
+      orderBy("createdAt")
+    );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const data: EventWithID[] = [];
       querySnapshot.forEach((doc) => {
         data.push({ data: doc.data() as EventData, event_id: doc.id });
       });
-      setter(data);
+      onSuccess(data);
 
       return () => unsubscribe();
     });
   } catch (error) {
-    console.log(error);
+    onError(true);
+    console.error(error);
   }
 };
 
@@ -84,7 +90,7 @@ export const getEventByID = async (id: string) => {
     const docSnap = await getDoc(docRef);
     return docSnap.data() as EventData;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 

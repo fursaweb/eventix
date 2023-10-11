@@ -10,4 +10,4 @@ const defaultUser = {
   email: "",
 };
 
-export const UserContext = createContext<User>(defaultUser);
+export const UserContext = createContext<User | null>(defaultUser);
