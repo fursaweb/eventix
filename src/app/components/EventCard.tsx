@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { EventData } from "@/services/events";
 import {
   Card,
@@ -7,6 +8,7 @@ import {
   Typography,
   CardActions,
   Button,
+  ButtonGroup,
 } from "@mui/material";
 
 interface Props {
@@ -17,7 +19,6 @@ interface Props {
 
 const EventCard: FC<Props> = ({ event_id, event, deleteEvent }) => {
   const { event_title, date, time, venue } = event;
-  const router = useRouter();
 
   return (
     <Card sx={{ backgroundColor: "#E9EDF1" }}>
@@ -36,24 +37,30 @@ const EventCard: FC<Props> = ({ event_id, event, deleteEvent }) => {
         </Typography>
       </CardContent>
       <CardActions sx={{ padding: "2px 0 0 " }}>
-        <Button
-          onClick={() => {
-            deleteEvent(event_id);
-          }}
-          size="small"
-          variant="outlined"
-          sx={{ borderRadius: 0 }}
-        >
-          Delete
-        </Button>
-        <Button
-          onClick={() => router.push(`/events/${event_id}`)}
-          size="small"
-          variant="contained"
-          sx={{ borderRadius: 0 }}
-        >
-          See more
-        </Button>
+        <ButtonGroup sx={{ width: "100%" }}>
+          <Button
+            onClick={() => {
+              deleteEvent(event_id);
+            }}
+            size="small"
+            variant="outlined"
+            sx={{ borderRadius: 0, width: "100%", borderLeft: 0 }}
+          >
+            Delete
+          </Button>
+          <Button
+            size="small"
+            variant="contained"
+            sx={{ borderRadius: 0, width: "100%" }}
+          >
+            <Link
+              style={{ color: "inherit", textDecoration: "none" }}
+              href={`/events/${event_id}`}
+            >
+              See more
+            </Link>
+          </Button>
+        </ButtonGroup>
       </CardActions>
     </Card>
   );

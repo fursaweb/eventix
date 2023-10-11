@@ -8,19 +8,14 @@ import { Container, Typography, Box, Button, TextField } from "@mui/material";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const router = useRouter();
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
   const handleSubmit = () => {
-    userAuth.signInUser(email, password, router);
+    userAuth.sendResetEmail(email);
   };
 
   return (
@@ -53,7 +48,7 @@ const Login = () => {
           align="center"
           sx={{ fontWeight: 700, textTransform: "uppercase" }}
         >
-          Welcome back
+          Do you want to reset password?
         </Typography>
         <Box sx={{ mb: "15px", mt: "50px" }}>
           <TextField
@@ -67,18 +62,6 @@ const Login = () => {
             onChange={handleEmailChange}
           />
         </Box>
-        <Box sx={{ mb: "35px" }}>
-          <TextField
-            type="password"
-            fullWidth
-            label="PASSWORD"
-            size="small"
-            variant="filled"
-            value={password}
-            id="password"
-            onChange={handlePasswordChange}
-          />
-        </Box>
         <Box sx={{ mb: "15px" }}>
           <Button
             fullWidth
@@ -90,23 +73,7 @@ const Login = () => {
               fontWeight: 400,
             }}
           >
-            Sign in
-          </Button>
-        </Box>
-        <Box>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => {
-              router.push("/signup");
-            }}
-            sx={{
-              borderRadius: "10px",
-              textTransform: "none",
-              fontWeight: 400,
-            }}
-          >
-            Create new account
+            Reset password
           </Button>
         </Box>
       </Box>

@@ -1,40 +1,62 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
-import { getEventByID, EventData } from "@/services/events";
+import React from "react";
+import { useParams } from "next/navigation";
+import { getEventByID } from "@/services/events";
+import { Typography, Box } from "@mui/material";
 
-const defaultEventData: EventData = {
-  user_id: "",
-  event_title: "",
-  venue: "",
-  date: "",
-  time: "",
-  description: "",
-  flier: undefined,
-  createdAt: null,
+const convertDate = (date: string) => {
+  return date.split("-").reverse().join(" ");
 };
 
-const Page = ({ params }: { params: { id: string } }) => {
-  const [event, setEvent] = useState<EventData>(defaultEventData);
+const Event = async () => {
+  const params = useParams();
 
-  const getData = useCallback(async () => {
-    const data = await getEventByID(params.id);
-    if (data) {
-      setEvent(data);
-    }
-  }, [params.id]);
+  const event = await getEventByID(params.id);
 
-  useEffect(() => {
-    getData();
-  }, [getData]);
+  const date = event ? convertDate(event.date) : "";
+
   return (
     <>
-      <h1>{event.event_title}</h1>
-      {event.flier_url && (
-        <Image src={event.flier_url} width="141" height="188" alt="" />
-      )}
+      <Box
+        sx={{
+          height: "25%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#274d76",
+          color: "#fff",
+        }}
+      >
+        <Typography variant="h2" align="center">
+          {event?.event_title}
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          margin: "0 auto",
+          maxWidth: 500,
+          width: "100%",
+          padding: "50px 22px 40px",
+          height: "100%",
+        }}
+      >
+        <p>
+          <strong>Description:</strong> {event?.description}
+        </p>
+        <p>
+          <strong>Venue:</strong> {event?.venue}
+        </p>
+        <p>
+          <strong>Date:</strong> {date}
+        </p>
+        <p>
+          <strong>Time:</strong> {event?.time}
+        </p>
+      </Box>
     </>
   );
 };
 
-export default Page;
+export default Event;

@@ -1,18 +1,15 @@
 "use client";
-import React, { useState, useContext, useEffect } from "react";
-import Image from "next/image";
-import { Container, Typography, Box, Button } from "@mui/material";
+import React, { FC, useState } from "react";
+import { Container, Box, Button } from "@mui/material";
 
 import CreateEvent from "@/app/components/CreateEvent";
 import EventsList from "@/app/components/EventsList";
-import { UserContext } from "@/contexts/UserContext";
-import { getEvents, EventWithID } from "@/services/events";
+import NoEvent from "@/app/components/NoEvent";
+import useEventsList from "@/hooks/useEventsList";
 
-const Dashboard = () => {
+const Dashboard: FC = () => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [eventsList, setEventsList] = useState<EventWithID[] | []>([]);
-  const user = useContext(UserContext);
-  const uid = user?.uid;
+  const { eventsList, error } = useEventsList();
 
   const handleClick = (): void => {
     setOpenDialog(true);
@@ -22,18 +19,8 @@ const Dashboard = () => {
     setOpenDialog(false);
   };
 
-  const setList = (data: EventWithID[]) => {
-    setEventsList(data);
-  };
-
-  useEffect(() => {
-    if (uid) {
-      getEvents(uid, setList);
-    }
-  }, [uid]);
-
-  return (
-    <>
+  if (!eventsList) {
+    return (
       <Container
         maxWidth="sm"
         sx={{
@@ -45,95 +32,73 @@ const Dashboard = () => {
           paddingBottom: "30px",
         }}
       >
-        {eventsList.length === 0 ? (
-          <>
-            <Box
-              sx={{
-                textAlign: "center",
-                maxWidth: 500,
-                width: "100%",
-                padding: "0 22px",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Image src="/no-event.svg" width="239" height="118" alt="" />
-              <Typography
-                variant="h5"
-                align="center"
-                sx={{
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  color: "#C4C4C4",
-                  fontSize: "1.25rem",
-                  marginTop: "20px",
-                }}
-              >
-                No events yet
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: "100px",
-                maxWidth: 500,
-                width: "100%",
-                padding: "0 22px",
-              }}
-            >
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={handleClick}
-                sx={{
-                  borderRadius: "10px",
-                  textTransform: "none",
-                  fontWeight: 400,
-                }}
-              >
-                Create new event
-              </Button>
-            </Box>
-          </>
-        ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <h1>Loading</h1>
+        </Box>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return <h1>Error</h1>;
+  }
+
+  return (
+    <Container
+      maxWidth="sm"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "calc(100% - 64px)",
+        paddingTop: "30px",
+        paddingBottom: "30px",
+      }}
+    >
+      {eventsList?.length === 0 ? (
+        <NoEvent handleClick={handleClick} />
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <EventsList list={eventsList} />
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              maxWidth: 500,
               width: "100%",
+              padding: "0 22px",
+              marginTop: "20px",
             }}
           >
-            <EventsList list={eventsList} />
-            <Box
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleClick}
               sx={{
-                maxWidth: 500,
-                width: "100%",
-                padding: "0 22px",
-                marginTop: "20px",
+                borderRadius: "10px",
+                textTransform: "none",
+                fontWeight: 400,
               }}
             >
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={handleClick}
-                sx={{
-                  borderRadius: "10px",
-                  textTransform: "none",
-                  fontWeight: 400,
-                }}
-              >
-                Create new event
-              </Button>
-            </Box>
+              Create new event
+            </Button>
           </Box>
-        )}
-        <CreateEvent open={openDialog} onClose={handleClose} />
-      </Container>
-    </>
+        </Box>
+      )}
+      <CreateEvent open={openDialog} onClose={handleClose} />
+    </Container>
   );
 };
 
